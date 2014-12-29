@@ -121,9 +121,10 @@ def bigrams(resultd):
 
     bigrams = bigramd.items()
     bigrams = filter(lambda b: b[1] > 1, bigrams)
-    bigrams.sort(lambda a, b: cmp(b[1], b[1]))
+    bigrams.sort(lambda a, b: cmp(b[1], a[1]))
 
-    ## console.log(bigrams)
+    ## pprint.pprint(bigrams)
+    ## sys.exit(0)
 
     ## only can have to 16 different lengths
     offset = len(raw_times)
