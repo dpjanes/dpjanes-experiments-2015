@@ -51,21 +51,23 @@ def cluster(ds, variance=0.10):
     ## find clusters
     lts = []
 
-    for d in ds:
-        length = d["length"]
-        length_m = length * ( 1 - variance )
-        length_p = length * ( 1 + variance )
+    ## run twice in case averging perturbs values out
+    for x in xrange(2):
+        for d in ds:
+            length = d["length"]
+            length_m = length * ( 1 - variance )
+            length_p = length * ( 1 + variance )
 
-        found = False
-        for lt in lts:
-            if length_m < lt[0] and lt[0] < length_p:
-                lt[1].append(length)
-                lt[0] = sum(lt[1]) / len(lt[1])
-                found = True
-                break
+            found = False
+            for lt in lts:
+                if length_m < lt[0] and lt[0] < length_p:
+                    lt[1].append(length)
+                    lt[0] = sum(lt[1]) / len(lt[1])
+                    found = True
+                    break
 
-        if not found:
-            lts.append([ length, [ length, ]])
+            if not found:
+                lts.append([ length, [ length, ]])
 
     ## assign to a cluster
     for d in ds:
@@ -77,6 +79,11 @@ def cluster(ds, variance=0.10):
             if length_m < lt[0] and lt[0] < length_p:
                 d["cluster"]  = int(round(lt[0] / 10.0)) * 10
                 break
+
+    ## if no cluser, it gets it's own - rare
+    for d in ds:
+        if not d.get("cluster"):
+            d["cluser"] = int(round(d["length"] / 10.0)) * 10
 
 def onoffs(resultd):
     """Find 'raw_10s' and 'raw_times' and store in resultd
